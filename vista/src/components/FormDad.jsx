@@ -1,45 +1,69 @@
-import React, { Fragment, useState, useEffect } from 'react'
+import React, { Fragment, useState, useEffect, useMemo } from 'react'
 import ResponsiveAppBar from './NavBar';
 import FormOdontologo from './FormOdontologo'
-import { Button } from '@mui/material';
-
-// import StateTextFields from './NavBar'
-// import NavBar from './NavBar'
-
+import { Route, Routes } from 'react-router-dom';
+import { Odontologos } from '../forms/Odontologo';
+import { Pacientes } from '../forms/Paciente';
+import Turnos from '../forms/Turno';
+import CustomizedTables from './List';
 
 const FormDad = () => {
-    // const [inputValuesOdontologos, setInputValuesOdontologos] = useState(null)
 
-    const forms =[
-        
-        { odontologo: { matricula: "123", nombre: "", apellido: "" }},
-        { paciente: { Nombre: "pacinte", apellido: "", dni: "", fecha: "", email: "", }},
-        { turno: { paciente: "turno", odontologo: "", fecha: "" }}
-    ]
+    const formMemo = useMemo(() => {
+        const forms = [
+
+            { odontologo: { matricula: "123", nombre: "", apellido: "" } },
+            { paciente: { Nombre: "pacinte", apellido: "", dni: "", fecha: "", email: "", } },
+            { turno: { paciente: "turno", odontologo: "", fecha: "" } }
+        ]
+        return forms
+    }, [])
     const [seleccion, setSeleccion] = useState('paciente')
+    const [inputValues, setInputValues] = useState({})
+   
+
     // const opcion =  forms.filter(item => Object.keys(item) == seleccion )
-    const [opcion, setOpcion] = useState(forms.filter(item => Object.keys(item) == seleccion ))
-    
+    const [opcion, setOpcion] = useState(null)
+
     useEffect(() => {
-        const newOpcion = forms.filter(item => Object.keys(item) == seleccion) 
+        const newOpcion = formMemo.filter(item => Object.keys(item) === seleccion)
         // console.log(seleccion);
         console.log(newOpcion);
         setOpcion(newOpcion)
-
-    }, [seleccion])
-
-
     
-    // console.log(opcion);
+    }, [seleccion, formMemo])
+
+
+
 
 
     const handleSelection = (e) => {
-        const selectValue = e.slice(0,(e.length-1))
+        const selectValue = e.slice(0, (e.length - 1))
         setSeleccion(selectValue)
-        // console.log(selectValue);
-        // console.log(seleccion);
-        // console.log(objeto);
-        // console.log(tipo[seleccion])
+        console.log(selectValue);
+    }
+
+    console.log(inputValues);
+    const handleChange = (event) => {
+        setInputValues({ ...inputValues, [event.target.name]: event.target.value })
+
+    }
+
+    const handleRender = (e) => {
+        console.log(e);
+        // if(e === "Registrar"){
+        //     console.log("entra");
+        //     return  (opcion && opcion.map((item, index) => (<FormOdontologo inputValues={inputValues} handleChange={handleChange} campo={item} key={index} seleccion={seleccion} />)))
+
+        // }
+
+        // if (e === "Listar"){
+        //     return <Typography>hola</Typography>
+        // }
+        
+        return <h1>{e}</h1>
+
+
     }
 
 
@@ -60,21 +84,37 @@ const FormDad = () => {
     //     handleCleanUp,
     //     seleccion
     // }
-    const prueba = Object.keys(opcion[0])
-    console.log(prueba);
-    return (
 
-        <Fragment>
-            <ResponsiveAppBar setSeleccion={handleSelection} />
-            <h1>Registrar {seleccion}</h1>
-            {
-                opcion?.map(item => (Object.keys(item && item[seleccion]).map(item2 => (<FormOdontologo campo={item2} key={item2}/>))
-                     
-                ))
-            }
-            <p>{JSON.stringify(opcion[0])}</p>
-            <Button sx={{ color: 'green' }} >Registar {seleccion}</Button>
-        </Fragment>
+
+    return (
+        <Routes>
+            <Route path='/' element={<ResponsiveAppBar setSeleccion={handleSelection} seleccion={seleccion} />}>
+                <Route path='/registrar/odontologo' element={<Odontologos seleccion={seleccion} />} />
+                <Route path='/registrar/paciente' element={<Pacientes seleccion={seleccion}/>} />
+                <Route path='/registrar/turno' element={<Turnos seleccion={seleccion}/>} />
+                <Route path='/listar/odontologo' element={<CustomizedTables />} />
+                <Route path='/listar/paciente' element={<CustomizedTables />} />
+                <Route path='/listar/turno' element={<CustomizedTables />} />
+                <Route path='/actualizar/odontologo' element={<CustomizedTables />} /> 
+                <Route path='/actualizar/paciente' element={<CustomizedTables />} />
+                <Route path='/actualizar/turno' element={<CustomizedTables />} />
+            </Route>
+        </Routes>
+
+        // <Fragment>
+        //     <ResponsiveAppBar setSeleccion={handleSelection} handleRender={handleRender} />
+
+        //     {render === "Registrar" ? 
+
+        //         opcion && opcion.map((item, index) =>
+        //             (<FormOdontologo inputValues={inputValues} handleChange={handleChange} campo={item} key={index} seleccion={seleccion} />))
+
+        //     : 
+        //     <Button>falso</Button>}
+
+
+
+        // </Fragment>
 
 
 

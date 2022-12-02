@@ -1,16 +1,17 @@
-import React, { useState } from 'react'
-import { FormControl, FormGroup, InputLabel, FormHelperText, Input, Button, keyframes } from '@mui/material';
+import React, { Fragment, useState } from 'react'
+import { FormControl, FormGroup, InputLabel, FormHelperText, Input, Button, keyframes, Typography } from '@mui/material';
 import axios from 'axios'
 
-const FormOdontologo = ({ campo, seleccion, inputValuesOdontologos, setInputValuesOdontologos, handleSubmit, handleCleanUp }) => {
-    
+const FormOdontologo = ({ handleChange, campo, seleccion, inputValues }) => {
+    const values = Object.keys(campo);
+    const valuesDos = Object.keys(campo[values[0]]);
     // const filtro = inputValuesOdontologos.filter(item => Object.keys(item) == seleccion  );
     // const campos = filtro.map(item => (Object.keys(item[seleccion])) )
 
 
     const peticion = () => {
 
-        axios.post('http://localhost:8080/odontologos', inputValuesOdontologos)
+        axios.post('http://localhost:8080/turnos', inputValuesOdontologos)
             .then(function (response) {
                 console.log(response);
             })
@@ -28,25 +29,39 @@ const FormOdontologo = ({ campo, seleccion, inputValuesOdontologos, setInputValu
     }
 
     return (
+        <Fragment>
+        <Typography 
+        variant="h4"
+        sx={{
+            marginTop: '20px'
+        }}
+        >
+            {seleccion.toUpperCase()}
+        </Typography>        
         <FormGroup row={false} sx={{
             // border: 'solid 1px',
             width: '500px',
-            gap: '20px'
         }}>
             {
-                <FormControl  margin='normal'>
-                        <InputLabel htmlFor="my-input">{campo}</InputLabel>
-                        <Input
-                            id={campo}
+                valuesDos.map((item, index) => (
+                    <FormControl key={index} margin='normal'>
+                        <InputLabel htmlFor="my-input">{item}</InputLabel>
+                        <Input 
+                        name={item}
+                        value={inputValues[item] || ""}
+                        label={item}
+                            id={campo[values][item]}
                             aria-describedby="my-helper-text"
-                            // onChange={(e) => setInputValuesOdontologos({ ...inputValuesOdontologos, matricula: e.target.value })}
-                            onChange={prueba}
+                            onChange={ handleChange }
+                            
                         />
                         <FormHelperText id="my-helper-text"></FormHelperText>
                     </FormControl>
+                ))
             }
-           
+           <Button sx={{ color: 'green' }} >Registar {seleccion}</Button>
         </FormGroup>
+        </Fragment>
     )
 }
 
